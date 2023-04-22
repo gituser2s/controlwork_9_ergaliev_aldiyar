@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Пользователь{% endblock %}
+{% load static %}
+
+{% block menu %}
+    <li><a href=" {% url 'change' user_obj.pk %}"><img class="edit-icon" src="{% static 'icons/edit.png' %}" alt="edit"></a></li>
+{% endblock %}
+
+{% block content %}
+    <h1>Личная страница пользователя {{ user_obj.get_full_name|default:user_obj.username }}</h1>
+    {% if user_obj.avatar %}
+        <img class="avatar" src="{{ user_obj.avatar.url }}" width="250" height="250" alt="user picture">
+    {% endif %}
+    <p>Логин: {{ user_obj.username }}</p
+    <p>Пол: {{ user_obj.gender }}</p>
+    <p>Почта: {{ user_obj.email }}</p>
+    <h1>Избранное:</h1>
+    {% for photo in photos %}
+        {% for favorite in photo.favorite_users.all %}
+            {% if favorite.user == request.user %}
+            <p>Подпись: {{ photo.signature }}</p>
+            {% if photo.photo.url %}
+                <img src="{{ photo.photo.url }}" alt="photo" class="IMG">
+            {% endif %}
+            <p>Пользователь <b><a href="{% url 'profile' user.pk %}">{{ favorite.user.username }}</a></b> - Заметка: {{ favorite.note }}</p>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+{#    {% for favorite in photo.user.favorite_users.all %}#}
+{% endblock %}
