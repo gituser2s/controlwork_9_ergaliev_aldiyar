@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Задача{% endblock %}
+{% block menu %}
+    {% if perms.photos.change_photo or photo.author == request.user %}
+        <a href="{% url 'photo_update' photo.pk%}" class="btn btn-primary">Обновить</a>
+        <a href="{% url 'photo_delete' photo.pk%}" class="btn btn-primary">Удалить</a>
+    {% endif %}
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <h1>Фотография</h1>
+        <p>Автор: {{ photo.author }}</p>
+        <p>Подпись: {{ photo.signature }}</p>
+        {% if photo.photo %}
+            <img src="{{ photo.photo.url }}" alt="photo" class="IMG">
+        {% endif %}
+        <h2>Дата создания: {{ photo.created_at }}</h2>
+        {% if user.is_authenticated %}
+        {% for favorite in photo.favorite_users.all %}
+            <p>Пользователь <b><a href="{% url 'profile' user.pk %}">{{ favorite.user.username }}</a></b> - Заметка: {{ favorite.note }}</p>
+        {% endfor %}
+        {% else %}
+            <p>Чтобы посмотреть избранные, войдите в аккаунт!</p>
+        {% endif %}
+    </div>
+{% endblock %}
