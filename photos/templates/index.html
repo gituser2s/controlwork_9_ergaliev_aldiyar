@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% load django_bootstrap5 %}
+{% load static %}
+{% block menu %}
+    {% if user.is_authenticated %}
+          <a href="{% url 'photo_add' %}" class="link-text">Добавить фото</a>
+    {% endif %}
+    <li>
+        <form action="" method="get"><input type="text" name="search" placeholder="Поиск" class="search-form">
+            <button type="submit"><img class="search-icon" src="{% static 'icons/search.png' %}" alt="search"></button>
+        </form>
+    </li>
+{% endblock %}
+{% block content %}
+    {% for photo in photos %}
+        <div class="blocks">
+            <h2>Подпись: {{ photo.signature }}</h2>
+            <h2>Автор: {{ photo.author }}</h2>
+            {% if photo.photo %}
+                <img src="{{ photo.photo.url }}" alt="photo" class="IMG">
+            {% endif %}
+            <h2>Дата создания: {{ photo.created_at }}</h2>
+            <p>
+                <a href="{% url 'photo_detail' photo.pk %}">Подробнее о фотографии..</a>
+            </p>
+            {% if user.is_authenticated %}
+            <form action="{% url 'to_favorite' photo.pk %}" method="post">
+                {% csrf_token %}
+                {% bootstrap_form favorite_form %}
+                {% bootstrap_button button_type="submit" content='Добавить в избранное' %}
+            </form>
+                <form action="{% url 'favorite_delete' photo.pk %}" method="post">
+                {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Удалить из избранного</button>
+                </form>
+                {% for favorite in photo.favorite_users.all %}
+                    <p>Пользователь <b><a href="{% url 'profile' user.pk %}">{{ favorite.user.username }}</a></b> - Заметка: {{ favorite.note }}</p>
+                {% endfor %}
+            {% else %}
+                <p>Чтобы добавить в избранное, войдите в аккаунт!</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% endblock %}
+</body>
+</html>
