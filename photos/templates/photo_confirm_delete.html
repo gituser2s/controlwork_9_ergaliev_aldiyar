@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Удаление{% endblock %}
+{% block menu %}
+    <a href="{% url 'photo_add' %}" class="btn btn-primary">Добавить</a>
+    <a href="{% url 'photo_update' photo.pk %}" class="btn btn-primary">Обновить</a>
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <h1>Вы точно хотите удалить фотографию?</h1>
+        <p>Автор: {{ photo.author }}</p>
+        <p>Подпись: {{ photo.signature }}</p>
+        {% if photo.photo %}
+            <img src="{{ photo.photo.url }}" alt="photo" class="IMG">
+        {% endif %}
+        <form action="{% url 'photo_confirm_delete' photo.pk %}" method="post">
+            {% csrf_token %}
+            <p><input type="submit" value="Удалить"></p>
+            <p><a href="{% url 'index' %}">Отмена</a></p>
+        </form>
+    </div>
+{% endblock %}
